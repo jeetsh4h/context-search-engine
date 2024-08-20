@@ -1,0 +1,52 @@
+<!-- index.html -->
+
+<!--
+    Overview:
+    This is a simple search template for a Context Search application. The main components are:
+    - A search box for users to input their search query.
+    - A button to submit the search query.
+    - A section to display the matched paragraph from the search results.
+
+    Dependencies:
+    - Uses external CSS from the 'static/style.css' file.
+    
+    Usage:
+    - When a user inputs a query in the search box and clicks 'Search', the form submits the query to the '/search' endpoint.
+    - If the search query matches any paragraph, it is displayed below the search box.
+-->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Context Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Search Container: Holds the form for the user's search query -->
+    <div class="search-container">
+        <h1>Context Based Vector Search Engine</h1>
+        <form action="/search" method="post" autocomplete="off">
+            <input type="text" name="query" placeholder="Search..." autocomplete="off" required>
+            <input type="submit" value="Search" class="submit-button">
+        </form>
+    </div>
+
+    <!-- Display Results: Shows the matched paragraph, if any -->
+    <div class="result-container">
+        {% if result %}
+            <p>You Searched for: <span class="searched_for">{{ searched_for }}</span></p>
+            <h3 class="result_heading">Closest Vector Matched Document</h3>
+            <p>{{ result|safe }}</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>
+
