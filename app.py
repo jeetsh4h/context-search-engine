@@ -1,10 +1,12 @@
+import os
+import chromadb
 from flask import Flask, render_template, request
 
-from create_index import pdf_to_text, create_faiss_index
-from search_engine import search_in_index
+from create_index import pdf_to_text, add_to_database
+from db_operations import query_documents
+# from search_engine import search_in_index
 
 
-# Initialize the Flask application
 app = Flask(__name__)
 
 
@@ -47,21 +49,33 @@ def search():
     """
     query = request.form['query']  # Extracting the query from the form
     query = query.strip()
-    result = search_in_index(query)  # Searching the index for the query
-    print("Result before: ", result)
-    result = result.replace("\n", "<br>")
-    print("Result after: ", result)
-    return render_template('index.html', result=result, searched_for=query)
-
-
-if __name__ == '__main__':
-    """
-    Start the Flask development server.
+    result = query_documents(query, 5)  # Searching the index for the query
     
-    The server will be in debug mode, meaning changes to files 
-    will auto-reload the application and any errors will be displayed in detail.
-    """
+    # print("Result before: ", result)
+    # result_data = result['data'].replace("\n", "<br>")
+    # print("Result after: ", result['data'])
+    # print(result['documents'][0][0])
 
-    pdf_to_text()  # Convert PDFs to text files
-    create_faiss_index('./docs/')
-    app.run(debug=True)
+    return render_template('index.html', result=result['documents'][0], searched_for=query)
+
+
+preprocess = True
+# if __name__ == '__main__':
+#     """
+#     Start the Flask development server.
+    
+#     The server will be in debug mode, meaning changes to files 
+#     will auto-reload the application and any errors will be displayed in detail.
+    # """
+    
+if not os.path.exists('./chroma.sqlite3'):
+    client = chromadb.connect('chroma.sqlite3')
+    print("Client's hearbeat:", client.heartbeat())
+
+if preprocess:
+    pdf_to_text()
+    add_to_database('./docs/')
+
+    preprocess = False
+
+app.run(debug=True)

@@ -42,8 +42,12 @@
     <div class="result-container">
         {% if result %}
             <p>You Searched for: <span class="searched_for">{{ searched_for }}</span></p>
-            <h3 class="result_heading">Closest Vector Matched Document</h3>
-            <p>{{ result|safe }}</p>
+            <h3 class="result_heading">Closest Vector Matched Documents</h3>
+            <hr>
+            {% for item in result %}
+                <p>{{ item|safe }}</p>
+                <hr>
+            {% endfor %}
         {% endif %}
     </div>
 </body>
